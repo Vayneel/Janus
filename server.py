@@ -65,6 +65,7 @@ async def main_server():
 
 
 if __name__ == "__main__":
-    obsidian_dir = get_obsidian_dir(True)
-    if obsidian_dir:
+    global program_data
+    program_data = get_program_data(True)
+    if program_data:
         asyncio.run(main_server())

@@ -1,15 +1,16 @@
 import os
 import socket
 import asyncio
+import json
 
 
 def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
-    print("Please, wait. The searching process may take up to 10 minutes")
+    print("please, wait, the searching process may take up to 10 minutes...", end="")
     if mode:
-        for root, dirs, files in os.walk('C:/'):
+        for root, dirs, files in os.walk('C:\\'):
             if "Obsidian" in dirs:
                 return os.path.join(root, "Obsidian")
-        for root, dirs, files in os.walk('D:/'):
+        for root, dirs, files in os.walk('D:\\'):
             if "Obsidian" in dirs:
                 return os.path.join(root, "Obsidian")
     else:
@@ -23,24 +24,37 @@ def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
     return False
 
 
-def write_obsidian_dir(obsidian_dir):
-    with open('obsidian_dir.md', 'w') as file:
-        file.write(obsidian_dir)
+def write_program_data(obsidian_dir, mode: bool):
+    if mode:
+        obsidian_dir_split = obsidian_dir.split("\\")
+        symbol = "\\"
+    else:
+        obsidian_dir_split = obsidian_dir.split("/")
+        symbol = "/"
+
+    janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + "Janus"
+
+    data_dict = {"obsidian_dir": obsidian_dir, "program_dir": janus_temp_dir}
+
+    with open('data.json', 'w') as data_file:
+        json.dump(data_dict, data_file)
+
+    return data_dict
 
 
-def get_obsidian_dir(mode: bool):
+def get_program_data(mode: bool) -> dict | None:
     print("Searching for Obsidian...", end="")
 
-    if os.path.exists('obsidian_dir.md'):
-        with open('obsidian_dir.md') as obsidian_dir_file:
+    if os.path.exists('data.json'):
+        with open('data.json') as data_file:
             print("found")
-            return obsidian_dir_file.readline()
+            return json.load(data_file)
 
     obsidian_dir = find_obsidian_dir(mode)
     if obsidian_dir:
-        write_obsidian_dir(obsidian_dir)
+        data = write_program_data(obsidian_dir, mode)
         print("found")
-        return obsidian_dir
+        return data
 
     print("error")
 

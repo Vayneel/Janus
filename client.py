@@ -35,16 +35,6 @@ async def example(reader, writer):
         writer.close()
 
 
-async def client_startup() -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
-    print("\nConnecting to the server...", end="")
-    reader, writer = await asyncio.open_connection(host='localhost', port=23323)
-    print("success")
-
-    await print_write(writer, "\nClient is ready")
-
-    return reader, writer
-
-
 async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     file_as_bytes = BytesIO()
     while 1:
@@ -54,14 +44,17 @@ async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter
             break
 
 
-
 async def main():
-    # obsidian_dir = get_obsidian_dir(False)  # todo
-    obsidian_dir = get_obsidian_dir(True)
-    if not obsidian_dir:
+    # program_data = get_program_data(False)  # todo
+    program_data = get_program_data(True)
+    if not program_data:
         return
 
-    reader, writer = client_startup()
+    print("\nConnecting to the server...", end="")
+    reader, writer = await asyncio.open_connection(host='localhost', port=23323)
+    print("success")
+    await print_write(writer, "\nClient is ready")
+
     command = await asyncio.wait_for(reader.read(16), timeout=4.0)
     print(f"\nCommand from server: <{command.decode()}>")
     print("\nExecuting command...")
