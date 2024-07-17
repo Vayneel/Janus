@@ -38,10 +38,11 @@ async def example(reader, writer):
 async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     file_as_bytes = BytesIO()
     while 1:
-        data = await asyncio.wait_for(reader.read(8192), timeout=8.0)
-        file_as_bytes.write(data)
-        if reader.at_eof():
-            break
+        break
+        # data = await asyncio.wait_for(reader.read(8192), timeout=8.0)
+        # file_as_bytes.write(data)
+        # if reader.at_eof():
+        #     break
 
 
 async def main():
@@ -51,11 +52,11 @@ async def main():
         return
 
     print("\nConnecting to the server...", end="")
-    reader, writer = await asyncio.open_connection(host='localhost', port=23323)
+    connection = socket_startup(False)
     print("success")
-    await print_write(writer, "\nClient is ready")
+    await print_send(connection, "\nClient is ready")
 
-    command = await asyncio.wait_for(reader.read(16), timeout=4.0)
+    command = connection.recv(16)
     print(f"\nCommand from server: <{command.decode()}>")
     print("\nExecuting command...")
 
@@ -73,5 +74,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
 

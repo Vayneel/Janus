@@ -59,7 +59,16 @@ def get_program_data(mode: bool) -> dict | None:
     print("error")
 
 
-async def print_write(writer: asyncio.StreamWriter, message: str):
+def socket_startup(mode: bool) -> socket.socket:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if mode:
+        s.bind(("localhost", 23323))
+    else:
+        s.connect(("localhost", 23323))
+
+    return s
+
+
+async def print_send(connection, message: str):
     print(message)
-    writer.write(message.encode())
-    await writer.drain()
+    connection.send(message.encode())
