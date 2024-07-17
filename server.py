@@ -10,7 +10,7 @@ from general import *
 
 
 def server_push():
-    zip_obsidian()
+    zip_obsidian(True)
 
 
 def handler(connection, address):

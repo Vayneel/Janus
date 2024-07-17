@@ -25,14 +25,12 @@ def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
 
 
 def write_program_data(obsidian_dir, mode: bool):
-    if mode:
-        obsidian_dir_split = obsidian_dir.split("\\")
-        symbol = "\\"
-    else:
-        obsidian_dir_split = obsidian_dir.split("/")
-        symbol = "/"
+    symbol = "\\" if mode else "/"
+    obsidian_dir_split = obsidian_dir.split(symbol)
 
-    janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + "Janus"
+    janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + symbol + "Janus"
+
+    os.makedirs(janus_temp_dir, exist_ok=True)
 
     data_dict = {"obsidian_dir": obsidian_dir, "program_dir": janus_temp_dir}
 
@@ -74,17 +72,26 @@ def print_send(connection, message: str):
     connection.send(message.encode())
 
 
-def zip_obsidian():
+def zip_obsidian(mode):
     print("\nCreating zip archive...\n")
 
-    program_data = get_program_data()
-    zipfile_dir = program_data["program_dir"] + "JanusObsidianArchive.zip"
+    if not os.path.exists('data.json'):
+        raise FileNotFoundError
+
+    with open('data.json') as data_file:
+        program_data = json.load(data_file)
+    zipfile_dir = program_data["program_dir"] + ("\\" if mode else "/") + "JanusObsidianArchive.zip"
+
+    current_dir = os.getcwd()
+    os.chdir(program_data["obsidian_dir"])
 
     with ZipFile(zipfile_dir, "w") as zipf:
-        for root, dirs, files in os.walk(program_data["obsidian_dir"]):
+        for root, dirs, files in os.walk("."):
             for file in files:
                 path = os.path.join(root, file)
                 zipf.write(path)
                 print(f"file added to archive > {path}")
+
+    os.chdir(current_dir)
 
     print("\nZip archive created")
