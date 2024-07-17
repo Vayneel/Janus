@@ -9,19 +9,6 @@ import asyncio
 from io import BytesIO
 from general import *
 
-#
-# try:
-#     obsidian_dir = get_obsidian_dir(False)
-#     sock = socket_startup(False)
-#
-#     sock.recv(2)
-#     print(f'Connected')
-#
-#
-#
-# except Exception as e:
-#     print(e)
-
 
 async def example(reader, writer):
     for i in range(10):
@@ -48,18 +35,38 @@ async def example(reader, writer):
         writer.close()
 
 
+async def client_startup() -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+    print("\nConnecting to the server...", end="")
+    reader, writer = await asyncio.open_connection(host='localhost', port=23323)
+    print("success")
+
+    await print_write(writer, "\nClient is ready")
+
+    return reader, writer
+
+
 async def main():
     # obsidian_dir = get_obsidian_dir(False)  # todo
     obsidian_dir = get_obsidian_dir(True)
     if not obsidian_dir:
-        return print(obsidian_dir)
-    print("Obsidian found")
+        return
 
-    reader, writer = await asyncio.open_connection(host='localhost', port=23323)
+    reader, writer = client_startup()
+    command = await asyncio.wait_for(reader.read(16), timeout=4.0)
+    print(f"\nCommand from server: <{command.decode()}>")
+    print("\nExecuting command...")
 
-    print("Connected")
-    print_write(writer, "Client is ready\n")
-    print("-" * 30 + "\n")
+    match command.decode():
+        case "push":
+            pass
+        case "pull":
+            pass
+        case "create-backup":
+            pass
+        case "load-backup":
+            pass
+
+    print("\nCommand executed")
 
 
 if __name__ == "__main__":

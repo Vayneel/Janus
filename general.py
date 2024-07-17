@@ -4,6 +4,7 @@ import asyncio
 
 
 def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
+    print("Please, wait. The searching process may take up to 10 minutes")
     if mode:
         for root, dirs, files in os.walk('C:\\'):
             if "Obsidian" in dirs:
@@ -28,27 +29,20 @@ def write_obsidian_dir(obsidian_dir):
 
 
 def get_obsidian_dir(mode: bool):
+    print("Searching for Obsidian...", end="")
+
     if os.path.exists('obsidian_dir.md'):
         with open('obsidian_dir.md') as obsidian_dir_file:
+            print("found")
             return obsidian_dir_file.readline()
+
     obsidian_dir = find_obsidian_dir(mode)
     if obsidian_dir:
         write_obsidian_dir(obsidian_dir)
+        print("found")
         return obsidian_dir
-    return "Obsidian not found"
 
-
-def socket_startup(mode: bool):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    address = ('127.0.0.1', 23323)
-    if mode:
-        sock.bind(address)
-        print('Starting up on 127.0.0.1:23323')
-    else:
-        sock.connect(address)
-        print('Trying to connect to 127.0.0.1:23323')
-
-    return sock
+    print("error")
 
 
 async def get_command(sock: socket.socket):
@@ -71,7 +65,7 @@ async def async_command_action(sock):
         tg.create_task(send_command(sock))
 
 
-def print_write(writer: asyncio.StreamWriter, message: str):
+async def print_write(writer: asyncio.StreamWriter, message: str):
     print(message)
     writer.write(message.encode())
-    writer.drain()
+    await writer.drain()
