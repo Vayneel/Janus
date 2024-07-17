@@ -42,8 +42,10 @@ async def handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     print(client_status.decode())
 
     while 1:
-        command = input("\nEnter command (push, pull, create-backup, load-backup): ").lower()
-        if command in ("push", "pull", "create-backup", "load-backup"):
+        command = input("\nEnter command (push, pull, create-backup, load-backup, exit): ").lower()
+        if command == "exit":
+            return
+        elif command in ("push", "pull", "create-backup", "load-backup"):
             break
         print("Unknown command. Try again")
 

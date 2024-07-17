@@ -45,6 +45,16 @@ async def client_startup() -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
     return reader, writer
 
 
+async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    file_as_bytes = BytesIO()
+    while 1:
+        data = await asyncio.wait_for(reader.read(8192), timeout=8.0)
+        file_as_bytes.write(data)
+        if reader.at_eof():
+            break
+
+
+
 async def main():
     # obsidian_dir = get_obsidian_dir(False)  # todo
     obsidian_dir = get_obsidian_dir(True)
