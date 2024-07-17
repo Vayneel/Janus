@@ -1,7 +1,7 @@
 import os
 import socket
-import asyncio
 import json
+from zipfile import ZipFile
 
 
 def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
@@ -42,7 +42,7 @@ def write_program_data(obsidian_dir, mode: bool):
     return data_dict
 
 
-def get_program_data(mode: bool) -> dict | None:
+def get_program_data(mode: bool = True) -> dict | None:
     print("Searching for Obsidian...", end="")
 
     if os.path.exists('data.json'):
@@ -72,3 +72,19 @@ def socket_startup(mode: bool) -> socket.socket:
 def print_send(connection, message: str):
     print(message)
     connection.send(message.encode())
+
+
+def zip_obsidian():
+    print("\nCreating zip archive...\n")
+
+    program_data = get_program_data()
+    zipfile_dir = program_data["program_dir"] + "JanusObsidianArchive.zip"
+
+    with ZipFile(zipfile_dir, "w") as zipf:
+        for root, dirs, files in os.walk(program_data["obsidian_dir"]):
+            for file in files:
+                path = os.path.join(root, file)
+                zipf.write(path)
+                print(f"file added to archive > {path}")
+
+    print("\nZip archive created")

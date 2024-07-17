@@ -9,6 +9,10 @@ from io import BytesIO
 from general import *
 
 
+def server_push():
+    zip_obsidian()
+
+
 def handler(connection, address):
     print(f"\nClient connected with {address[0]}:{address[1]}")
     client_status = connection.recv(64)
@@ -24,6 +28,16 @@ def handler(connection, address):
 
     connection.send(command.encode())
 
+    match command:
+        case "push":
+            server_push()
+        case "pull":
+            pass
+        case "create-backup":
+            pass
+        case "load-backup":
+            pass
+
 
 if __name__ == "__main__":
     global program_data
@@ -31,5 +45,4 @@ if __name__ == "__main__":
     if program_data:
         s = socket_startup(True)
         s.listen()
-        conn, addr = s.accept()
-        handler(conn, addr)
+        handler(*s.accept())
