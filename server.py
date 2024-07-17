@@ -9,8 +9,8 @@ from io import BytesIO
 from general import *
 
 
-async def handler(connection, address):
-    print(f"\nClient connected with {address}")
+def handler(connection, address):
+    print(f"\nClient connected with {address[0]}:{address[1]}")
     client_status = connection.recv(64)
     print(client_status.decode())
 
@@ -22,7 +22,7 @@ async def handler(connection, address):
             break
         print("Unknown command. Try again")
 
-    await print_send(connection, command)
+    connection.send(command.encode())
 
 
 if __name__ == "__main__":

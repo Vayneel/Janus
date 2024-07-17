@@ -69,6 +69,6 @@ def socket_startup(mode: bool) -> socket.socket:
     return s
 
 
-async def print_send(connection, message: str):
+def print_send(connection, message: str):
     print(message)
     connection.send(message.encode())

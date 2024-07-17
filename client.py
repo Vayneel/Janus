@@ -45,7 +45,7 @@ async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter
         #     break
 
 
-async def main():
+def main():
     # program_data = get_program_data(False)  # todo
     program_data = get_program_data(True)
     if not program_data:
@@ -54,7 +54,7 @@ async def main():
     print("\nConnecting to the server...", end="")
     connection = socket_startup(False)
     print("success")
-    await print_send(connection, "\nClient is ready")
+    print_send(connection, "\nClient is ready")
 
     command = connection.recv(16)
     print(f"\nCommand from server: <{command.decode()}>")
