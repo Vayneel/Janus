@@ -49,9 +49,17 @@ async def example(reader, writer):
 
 
 async def main():
+    # obsidian_dir = get_obsidian_dir(False)  # todo
+    obsidian_dir = get_obsidian_dir(True)
+    if not obsidian_dir:
+        return print(obsidian_dir)
+    print("Obsidian found")
+
     reader, writer = await asyncio.open_connection(host='localhost', port=23323)
 
-
+    print("Connected")
+    print_write(writer, "Client is ready\n")
+    print("-" * 30 + "\n")
 
 
 if __name__ == "__main__":

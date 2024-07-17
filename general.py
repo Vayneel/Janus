@@ -70,3 +70,8 @@ async def async_command_action(sock):
         tg.create_task(get_command(sock))
         tg.create_task(send_command(sock))
 
+
+def print_write(writer: asyncio.StreamWriter, message: str):
+    print(message)
+    writer.write(message.encode())
+    writer.drain()

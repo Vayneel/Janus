@@ -30,6 +30,7 @@ from general import *
 # if __name__ == "__main__":
 #     main()
 
+
 async def example(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     all_data = BytesIO()
 
@@ -56,12 +57,10 @@ async def example(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
 
 
 async def handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-    print("Someone connected")
-    obsidian_dir = get_obsidian_dir(True)
-    if not obsidian_dir:
-        print(obsidian_dir)
-        return
-    print("Obsidian found")
+    print("Client connected")
+
+    client_status = asyncio.wait_for(reader.read(64), timeout=4.0)
+    print(client_status)
 
 
 async def main_server():
@@ -77,4 +76,9 @@ async def main_server():
 
 
 if __name__ == "__main__":
-    asyncio.run(main_server())
+    obsidian_dir = get_obsidian_dir(True)
+    if not obsidian_dir:
+        print(obsidian_dir)
+    else:
+        print("Obsidian found")
+        asyncio.run(main_server())
