@@ -10,6 +10,7 @@ from io import BytesIO
 from general import *
 
 
+# here are examples of asyncio usage
 async def example(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
     all_data = BytesIO()
 
