@@ -35,9 +35,13 @@ async def example(reader, writer):
         writer.close()
 
 
-def client_push():
+def client_push(connection, program_data):
     # zip_obsidian(False)  # todo
-    zip_obsidian(True)
+    zipfile_size = zip_obsidian(program_data)
+    connection.send(zipfile_size.to_bytes(64, "big"))
+
+    with open(program_data["zipfile_loc"], "rb") as zipfile:
+        connection.send(zipfile.read())
 
 
 def main():
@@ -63,7 +67,8 @@ def main():
 
     match command:
         case "push":
-            client_push()
+            # client_push(connection, program_data)
+            pass
         case "pull":
             pass
         case "create-backup":

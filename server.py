@@ -1,12 +1,11 @@
-import socket
-import os
-import datetime
-import threading
-import json
-import sys
-import ctypes
-from io import BytesIO
 from general import *
+
+
+def server_push(connection, program_data_dict):
+    remove_obsidian_dir_content(program_data_dict)
+    # zipfile_bytes = gather_zipfile(connection)
+    # with open(program_data_dict["received_zipfile_loc"], "wb") as zipfile:
+    #     zipfile.write(zipfile_bytes)
 
 
 def handler(connection, address):
@@ -18,7 +17,7 @@ def handler(connection, address):
 
     match command.decode():
         case "push":
-            pass
+            server_push(connection, program_data)
         case "pull":
             pass
         case "create-backup":

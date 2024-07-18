@@ -1,6 +1,8 @@
 import os
 import socket
 import json
+import shutil
+from io import BytesIO
 from zipfile import ZipFile
 
 
@@ -30,9 +32,14 @@ def write_program_data(obsidian_dir, mode: bool):
 
     janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + symbol + "Janus"
 
+    zipfile_base = janus_temp_dir + symbol
+    zipfile_loc = zipfile_base + "JanusObsidianArchive.zip"
+    received_zipfile_loc = zipfile_base + "JanusReceivedArchive.zip"
+
     os.makedirs(janus_temp_dir, exist_ok=True)
 
-    data_dict = {"obsidian_dir": obsidian_dir, "program_dir": janus_temp_dir}
+    data_dict = {"obsidian_dir": obsidian_dir, "program_dir": janus_temp_dir, "zipfile_loc": zipfile_loc,
+                 "received_zipfile_loc": received_zipfile_loc}
 
     with open('data.json', 'w') as data_file:
         json.dump(data_dict, data_file)
@@ -72,20 +79,12 @@ def print_send(connection, message: str):
     connection.send(message.encode())
 
 
-def zip_obsidian(mode):
+def zip_obsidian(program_data) -> int:
     print("\nCreating zip archive...\n")
-
-    if not os.path.exists('data.json'):
-        raise FileNotFoundError
-
-    with open('data.json') as data_file:
-        program_data = json.load(data_file)
-    zipfile_dir = program_data["program_dir"] + ("\\" if mode else "/") + "JanusObsidianArchive.zip"
-
     current_dir = os.getcwd()
     os.chdir(program_data["obsidian_dir"])
 
-    with ZipFile(zipfile_dir, "w") as zipf:
+    with ZipFile(program_data["zipfile_loc"], "w") as zipf:
         for root, dirs, files in os.walk("."):
             for file in files:
                 path = os.path.join(root, file)
@@ -95,3 +94,34 @@ def zip_obsidian(mode):
     os.chdir(current_dir)
 
     print("\nZip archive created")
+
+    return os.path.getsize(program_data["zipfile_loc"])
+
+
+def get_progress_bar(sent_quantity, file_size):
+    percentage20 = round(sent_quantity / file_size * 20)
+    return f"[{"#" * percentage20}{"-" * (20 - percentage20)}] {percentage20 * 5}%"
+
+
+def gather_zipfile(connection):
+    zipfile_size = int.from_bytes(connection.recv(64), "big")
+    zipfile = BytesIO()
+    bytes_to_recv = 16384
+
+    while zipfile.getbuffer().nbytes < zipfile_size:
+        if zipfile_size - zipfile.getbuffer().nbytes > bytes_to_recv:
+            data_slice = connection.recv(bytes_to_recv)
+        else:
+            data_slice = connection.recv(zipfile_size - zipfile.getbuffer().nbytes)
+
+        if not data_slice:
+            raise Exception("Incomplete file received")
+
+        zipfile.write(data_slice)
+
+    return zipfile
+
+
+def remove_obsidian_dir_content(program_data_dict):
+    # shutil.rmtree(program_data_dict['obsidian_dir'], ignore_errors=True)
+    shutil.rmtree("D:\\Test", ignore_errors=True)
