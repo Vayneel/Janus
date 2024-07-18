@@ -65,12 +65,14 @@ def get_program_data(mode: bool = True) -> dict | None:
     print("error")
 
 
-def socket_startup(mode: bool) -> socket.socket:
+def socket_startup(ip, mode: bool) -> socket.socket:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     if mode:
-        s.bind(("192.168.2.37", 23323))
+        s.bind((ip, 23323))
+        # s.bind(("192.168.2.37", 23323))
     else:
-        s.connect(("192.168.2.37", 23323))
+        s.connect((ip, 23323))
+        # s.connect(("192.168.2.37", 23323))
 
     return s
 

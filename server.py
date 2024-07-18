@@ -1,5 +1,4 @@
-import socket
-
+import requests
 from general import *
 
 
@@ -28,9 +27,11 @@ def handler(connection, address):
 if __name__ == "__main__":
     global program_data
     program_data = get_program_data(True)
+    ip = json.loads(requests.get("https://ip.seeip.org/jsonip?").text)["ip"]
+    print(f"Your IPv4 address: {ip}")
     # print(socket.gethostbyname_ex(socket.gethostname())[2])
     if program_data:
-        s = socket_startup(True)
+        s = socket_startup(ip, True)
         s.listen()
         try:
             handler(*s.accept())

@@ -6,8 +6,10 @@ def main():
     if not program_data:
         return
 
+    ip = input("Enter IPv4 address, you see on your server: ")
+
     print("\nConnecting to the server...", end="")
-    connection = socket_startup(False)
+    connection = socket_startup(ip, False)
     print("success")
 
     while 1:
