@@ -102,7 +102,7 @@ def zip_obsidian(program_data_dict, mode: str) -> int:
 def get_progress_bar(sent_quantity, file_size):
     percentage100 = round(sent_quantity / file_size * 100)
     percentage20 = round(sent_quantity / file_size * 20)
-    return f"[{"#" * percentage20}{"-" * (20 - percentage20)}] {percentage100}%"
+    return f"[{'#' * percentage20}{'-' * (20 - percentage20)}] {percentage100}%"
 
 
 def gather_zipfile(connection):

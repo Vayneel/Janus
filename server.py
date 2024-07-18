@@ -28,3 +28,4 @@ if __name__ == "__main__":
         s = socket_startup(True)
         s.listen()
         handler(*s.accept())
+        s.close()
