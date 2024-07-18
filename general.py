@@ -33,13 +33,14 @@ def write_program_data(obsidian_dir, mode: bool):
     janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + symbol + "Janus"
 
     zipfile_base = janus_temp_dir + symbol
-    zipfile_loc = zipfile_base + "JanusObsidianArchive.zip"
-    received_zipfile_loc = zipfile_base + "JanusReceivedArchive.zip"
+    zipfile_loc = zipfile_base + "janusObsidianArchive.zip"
+    received_zipfile_loc = zipfile_base + "janusReceivedArchive.zip"
+    backup_zipfile_loc = zipfile_base + "backup.zip"
 
     os.makedirs(janus_temp_dir, exist_ok=True)
 
     data_dict = {"obsidian_dir": obsidian_dir, "program_dir": janus_temp_dir, "zipfile_loc": zipfile_loc,
-                 "received_zipfile_loc": received_zipfile_loc}
+                 "received_zipfile_loc": received_zipfile_loc, "backup_zipfile_loc": backup_zipfile_loc}
 
     with open('data.json', 'w') as data_file:
         json.dump(data_dict, data_file)
@@ -74,17 +75,17 @@ def socket_startup(mode: bool) -> socket.socket:
     return s
 
 
-def print_send(connection, message: str):
-    print(message)
-    connection.send(message.encode())
-
-
-def zip_obsidian(program_data) -> int:
+def zip_obsidian(program_data_dict, mode: str) -> int:
+    """
+    :param mode: push / backup
+    """
     print("\nCreating zip archive...\n")
     current_dir = os.getcwd()
-    os.chdir(program_data["obsidian_dir"])
+    os.chdir(program_data_dict["obsidian_dir"])
 
-    with ZipFile(program_data["zipfile_loc"], "w") as zipf:
+    zipfile_loc = program_data_dict["zipfile_loc"] if mode == "push" else program_data_dict["backup_zipfile_loc"]
+
+    with ZipFile(zipfile_loc, "w") as zipf:
         for root, dirs, files in os.walk("."):
             for file in files:
                 path = os.path.join(root, file)
@@ -95,7 +96,7 @@ def zip_obsidian(program_data) -> int:
 
     print("\nZip archive created")
 
-    return os.path.getsize(program_data["zipfile_loc"])
+    return os.path.getsize(zipfile_loc)
 
 
 def get_progress_bar(sent_quantity, file_size):
@@ -136,12 +137,12 @@ def remove_obsidian_dir_content(program_data_dict):
     shutil.rmtree(program_data_dict['obsidian_dir'], ignore_errors=True)
 
 
-def command_push(connection, program_data_dict, mode: str):
+def command_push_pull(connection, program_data_dict, mode: str):
     """
     :param mode: recv/send
     """
     if mode == "send":
-        zipfile_size = zip_obsidian(program_data_dict)
+        zipfile_size = zip_obsidian(program_data_dict, "push")
         connection.send(zipfile_size.to_bytes(64, "big"))
 
         with open(program_data_dict["zipfile_loc"], "rb") as zipfile:
@@ -160,3 +161,18 @@ def command_push(connection, program_data_dict, mode: str):
             zipfile.extractall(program_data_dict["obsidian_dir"])
         print("Archive extracted into obsidian directory")
 
+
+def command_create_backup(program_data_dict):
+    print("\nCreating backup...\n")
+    zip_obsidian(program_data_dict, "backup")
+    print("\nBackup created")
+
+
+def command_load_backup(program_data_dict):
+    print("\nLoading backup...\n")
+    remove_obsidian_dir_content(program_data_dict)
+    print("Obsidian content removed")
+    with ZipFile(program_data_dict["backup_zipfile_loc"], "r") as zipfile:
+        zipfile.extractall(program_data_dict["obsidian_dir"])
+    print("Archive extracted into obsidian directory")
+    print("\nBackup loaded")

@@ -10,13 +10,13 @@ def handler(connection, address):
 
     match command.decode():
         case "push":
-            command_push(connection, program_data, "recv")
+            command_push_pull(connection, program_data, "recv")
         case "pull":
-            command_push(connection, program_data, "send")
+            command_push_pull(connection, program_data, "send")
         case "create-backup":
-            pass
+            command_create_backup(program_data)
         case "load-backup":
-            pass
+            command_load_backup(program_data)
 
     print("\nCommand executed")
 

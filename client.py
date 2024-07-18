@@ -1,12 +1,3 @@
-import socket
-import os
-import datetime
-import threading
-import json
-import sys
-import ctypes
-import asyncio
-from io import BytesIO
 from general import *
 
 
@@ -33,13 +24,13 @@ def main():
 
     match command:
         case "push":
-            command_push(connection, program_data, "send")
+            command_push_pull(connection, program_data, "send")
         case "pull":
-            command_push(connection, program_data, "recv")
+            command_push_pull(connection, program_data, "recv")
         case "create-backup":
-            pass  # todo
+            command_create_backup(program_data)
         case "load-backup":
-            pass
+            command_load_backup(program_data)
 
 
 if __name__ == "__main__":
