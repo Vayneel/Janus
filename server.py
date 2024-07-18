@@ -1,3 +1,5 @@
+import socket
+
 from general import *
 
 
@@ -24,7 +26,8 @@ def handler(connection, address):
 if __name__ == "__main__":
     global program_data
     program_data = get_program_data(True)
-    if program_data:
+    # print(socket.gethostbyname_ex(socket.gethostname())[2])
+    if not program_data:
         s = socket_startup(True)
         s.listen()
         handler(*s.accept())
