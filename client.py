@@ -2,15 +2,12 @@ from general import *
 
 
 def main():
-    # program_data = get_program_data(False)  # todo
-    program_data = get_program_data(True)
+    program_data = get_program_data(False)
     if not program_data:
         return
 
-    ip = input("\nEnter IP address, you see on your server: ")
-
     print("\nConnecting to the server...", end="")
-    connection = socket_startup(ip, False)
+    connection = socket_startup(False)
     print("success")
 
     while 1:
