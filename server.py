@@ -19,6 +19,8 @@ def handler(connection, address):
             command_create_backup(program_data)
         case "load-backup":
             command_load_backup(program_data)
+        case "exit":
+            raise KeyboardInterrupt
 
     print("\nCommand executed")
 
@@ -27,8 +29,10 @@ if __name__ == "__main__":
     global program_data
     program_data = get_program_data(True)
     # print(socket.gethostbyname_ex(socket.gethostname())[2])
-    if not program_data:
+    if program_data:
         s = socket_startup(True)
         s.listen()
-        handler(*s.accept())
-        s.close()
+        try:
+            handler(*s.accept())
+        finally:
+            s.close()

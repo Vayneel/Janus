@@ -68,12 +68,9 @@ def get_program_data(mode: bool = True) -> dict | None:
 def socket_startup(mode: bool) -> socket.socket:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     if mode:
-        s.bind(("localhost", 23323))
+        s.bind(("192.168.2.37", 23323))
     else:
-        s.connect(("0.0.0.0", 23323))
-        # s.connect(("192.168.56.1", 23323))
-        # s.connect(("192.168.2.37", 23323))
-        # s.connect(("192.168.64.1", 23323))
+        s.connect(("192.168.2.37", 23323))
 
     return s
 

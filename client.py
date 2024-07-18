@@ -12,10 +12,7 @@ def main():
 
     while 1:
         command = input("\nEnter command (push, pull, create-backup, load-backup, exit): ").lower()
-        if command == "exit":
-            connection.close()
-            return
-        elif command in ("push", "pull", "create-backup", "load-backup"):
+        if command in ("push", "pull", "create-backup", "load-backup", "exit"):
             break
         print("Unknown command. Try again")
 
@@ -30,6 +27,8 @@ def main():
             command_create_backup(program_data)
         case "load-backup":
             command_load_backup(program_data)
+        case "exit":
+            connection.close()
 
 
 if __name__ == "__main__":
