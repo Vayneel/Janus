@@ -4,11 +4,15 @@ import json
 import shutil
 from io import BytesIO
 from zipfile import ZipFile
+from tkinter import filedialog
 
 
 def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
     print("please, wait, the searching process may take up to 10 minutes...", end="")
     if mode:
+        obsidian_directory = filedialog.askdirectory()
+        if obsidian_directory.endswith("Obsidian"):
+            return obsidian_directory
         for root, dirs, files in os.walk('C:\\'):
             if "Obsidian" in dirs:
                 return os.path.join(root, "Obsidian")
@@ -16,9 +20,6 @@ def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
             if "Obsidian" in dirs:
                 return os.path.join(root, "Obsidian")
     else:
-        for root, dirs, files in os.walk('/storage/emulated/0/Documents'):
-            if "Obsidian" in dirs:
-                return os.path.join(root, "Obsidian")
         for root, dirs, files in os.walk('/storage/emulated/0/'):
             if "Obsidian" in dirs:
                 return os.path.join(root, "Obsidian")
