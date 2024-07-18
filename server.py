@@ -3,11 +3,11 @@ from general import *
 
 def get_local_ip():
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('8.8.8.8', 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-    except Exception as e:
+        get_local_ip_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        get_local_ip_socket.connect(('8.8.8.8', 80))
+        local_ip = get_local_ip_socket.getsockname()[0]
+        get_local_ip_socket.close()
+    except Exception:
         local_ip = '127.0.0.1'
     return local_ip
 

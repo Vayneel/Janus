@@ -2,23 +2,25 @@ import os
 import socket
 import json
 import shutil
+import re
 from io import BytesIO
 from zipfile import ZipFile
 from tkinter import filedialog
+import subprocess
 
 
-def find_obsidian_dir(mode: bool) -> str | bool:  # todo normal
+def find_obsidian_dir(mode: bool) -> str | False:
     print("please, wait, the searching process may take up to 10 minutes...", end="")
     if mode:
         obsidian_directory = filedialog.askdirectory()
         if obsidian_directory.endswith("Obsidian"):
             return obsidian_directory
-        for root, dirs, files in os.walk('C:\\'):
-            if "Obsidian" in dirs:
-                return os.path.join(root, "Obsidian")
-        for root, dirs, files in os.walk('D:\\'):
-            if "Obsidian" in dirs:
-                return os.path.join(root, "Obsidian")
+        drives = subprocess.check_output("fsutil fsinfo drives").strip().decode()
+        drives = re.findall(r"\w+:\\", drives)
+        for drive in drives:
+            for root, dirs, files in os.walk(drive):
+                if "Obsidian" in dirs:
+                    return os.path.join(root, "Obsidian")
     else:
         for root, dirs, files in os.walk('/storage/emulated/0/'):
             if "Obsidian" in dirs:
@@ -70,10 +72,8 @@ def socket_startup(ip, mode: bool) -> socket.socket:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     if mode:
         s.bind((ip, 23323))
-        # s.bind(("192.168.2.37", 23323))
     else:
         s.connect((ip, 23323))
-        # s.connect(("192.168.2.37", 23323))
 
     return s
 
