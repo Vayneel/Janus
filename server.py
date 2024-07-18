@@ -2,6 +2,17 @@ import requests
 from general import *
 
 
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception as e:
+        local_ip = '127.0.0.1'
+    return local_ip
+
+
 def handler(connection, address):
     print(f"\nClient connected with {address[0]}:{address[1]}")
 
@@ -27,7 +38,7 @@ def handler(connection, address):
 if __name__ == "__main__":
     global program_data
     program_data = get_program_data(True)
-    ip = json.loads(requests.get("https://ip.seeip.org/jsonip?").text)["ip"]
+    ip = get_local_ip()
     print(f"Your IPv4 address: {ip}")
     # print(socket.gethostbyname_ex(socket.gethostname())[2])
     if program_data:

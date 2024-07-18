@@ -1,11 +1,23 @@
 from general import *
 
 
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception as e:
+        local_ip = '127.0.0.1'
+    return local_ip
+
+
 def main():
     program_data = get_program_data(False)
     if not program_data:
         return
 
+    print(get_local_ip())
     ip = input("Enter IPv4 address, you see on your server: ")
 
     print("\nConnecting to the server...", end="")
