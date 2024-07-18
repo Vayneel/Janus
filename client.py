@@ -67,7 +67,7 @@ def main():
 
     match command:
         case "push":
-            # client_push(connection, program_data)
+            client_push(connection, program_data)
             pass
         case "pull":
             pass

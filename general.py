@@ -123,5 +123,4 @@ def gather_zipfile(connection):
 
 
 def remove_obsidian_dir_content(program_data_dict):
-    # shutil.rmtree(program_data_dict['obsidian_dir'], ignore_errors=True)
-    shutil.rmtree("D:\\Test", ignore_errors=True)
+    shutil.rmtree(program_data_dict['obsidian_dir'], ignore_errors=True)
