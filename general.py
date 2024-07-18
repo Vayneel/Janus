@@ -99,26 +99,36 @@ def zip_obsidian(program_data) -> int:
 
 
 def get_progress_bar(sent_quantity, file_size):
+    percentage100 = round(sent_quantity / file_size * 100)
     percentage20 = round(sent_quantity / file_size * 20)
-    return f"[{"#" * percentage20}{"-" * (20 - percentage20)}] {percentage20 * 5}%"
+    return f"[{"#" * percentage20}{"-" * (20 - percentage20)}] {percentage100}%"
 
 
 def gather_zipfile(connection):
     zipfile_size = int.from_bytes(connection.recv(64), "big")
     zipfile = BytesIO()
     bytes_to_recv = 16384
+    i = 1
 
     while zipfile.getbuffer().nbytes < zipfile_size:
-        if zipfile_size - zipfile.getbuffer().nbytes > bytes_to_recv:
+        byte_difference = zipfile_size - zipfile.getbuffer().nbytes
+        if byte_difference > bytes_to_recv:
             data_slice = connection.recv(bytes_to_recv)
         else:
-            data_slice = connection.recv(zipfile_size - zipfile.getbuffer().nbytes)
+            data_slice = connection.recv(byte_difference)
 
         if not data_slice:
             raise Exception("Incomplete file received")
 
+        if i == 31:
+            print(get_progress_bar(zipfile.getbuffer().nbytes, zipfile_size))
+            i = 0
+
+        i += 1
+
         zipfile.write(data_slice)
 
+    print(get_progress_bar(zipfile.getbuffer().nbytes, zipfile_size))
     return zipfile
 
 
