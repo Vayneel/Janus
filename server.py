@@ -15,23 +15,24 @@ def get_local_ip():
 def handler(connection, address, program_data_dict: dict):
     print(f"\nClient connected with {address[0]}:{address[1]}")
 
-    command = connection.recv(16)
-    print(f"\nCommand from client: <{command.decode()}>")
-    print("\nExecuting command...")
+    while 1:
+        command = connection.recv(16)
+        print(f"\nCommand from client: <{command.decode()}>")
+        print("\nExecuting command...")
 
-    match command.decode():
-        case "push":
-            command_push_pull(connection, program_data_dict, "recv")
-        case "pull":
-            command_push_pull(connection, program_data_dict, "send")
-        case "create-backup":
-            command_create_backup(program_data_dict)
-        case "load-backup":
-            command_load_backup(program_data_dict)
-        case _:
-            raise KeyboardInterrupt
+        match command.decode():
+            case "push":
+                command_push_pull(connection, program_data_dict, "recv")
+            case "pull":
+                command_push_pull(connection, program_data_dict, "send")
+            case "create-backup":
+                command_create_backup(program_data_dict)
+            case "load-backup":
+                command_load_backup(program_data_dict)
+            case _:
+                raise KeyboardInterrupt
 
-    print("\nCommand executed")
+        print("\nCommand executed")
 
 
 if __name__ == "__main__":
