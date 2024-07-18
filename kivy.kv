@@ -1,0 +1,73 @@
+<FloatLayout>:
+    size: root.width, root.width
+    canvas.before:
+        Color:
+            rgba: 1, 0.7, 0.8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<MainWindow>:
+    name: "m_window"
+
+    FloatLayout:
+        Label:
+            text: "CHOOSE COMMAND TO EXECUTE"
+            color: 0,0,0,1
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.85}
+
+        Button:
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.7}
+            text: "PUSH"
+            on_press: root.push_button_pressed()
+
+        Button:
+            id: pull_btn
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.5}
+            text: "PULL"
+            on_press: root.pull_button_pressed()
+
+        Button:
+            id: cb_btn
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.3}
+            text: "CREATE BACKUP"
+            on_press: root.cb_button_pressed()
+
+        Button:
+            id: lb_btn
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.1}
+            text: "LOAD BACKUP"
+            on_press: root.lb_button_pressed()
+
+<ConnectToServerWindow>:
+    name: "cts_window"
+    ip_input: ip_input
+
+    FloatLayout:
+        Label:
+            text: "ENTER THE IP ADDRESS YOU SEE ON YOUR PC SCREEN"
+            color: 0,0,0,1
+            size_hint: 0.8, 0.2
+            pos_hint: {"x": 0.1, "y": 0.7}
+
+        TextInput:
+            id: ip_input
+            multiline: False
+            size_hint: 0.8, 0.1
+            pos_hint: {"x": 0.1, "y": 0.5}
+
+        Button:
+            size_hint: 0.8, 0.2
+            pos_hint: {"x": 0.1, "y": 0.1}
+            text: "CONNECT"
+            on_press: root.connect_button_pressed()
+            on_release: app.root.current = "m_window"
+
+WindowManager:
+    ConnectToServerWindow:
+    MainWindow:

@@ -9,7 +9,7 @@ from tkinter import filedialog
 import subprocess
 
 
-def find_obsidian_dir(mode: bool) -> str | False:
+def find_obsidian_dir(mode: bool) -> str | bool:
     print("please, wait, the searching process may take up to 10 minutes...", end="")
     if mode:
         obsidian_directory = filedialog.askdirectory()

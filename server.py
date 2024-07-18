@@ -28,7 +28,7 @@ def handler(connection, address, program_data_dict: dict):
             command_create_backup(program_data_dict)
         case "load-backup":
             command_load_backup(program_data_dict)
-        case "exit":
+        case _:
             raise KeyboardInterrupt
 
     print("\nCommand executed")

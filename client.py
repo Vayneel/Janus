@@ -1,38 +1,62 @@
+from kivy.app import App
+from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import ObjectProperty
+from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.lang import Builder
 from general import *
 
+# program_data = get_program_data(False)  # todo
+program_data = get_program_data(True)
+if not program_data:
+    raise FileNotFoundError
+connection: socket
 
-def main():
-    program_data = get_program_data(False)
-    if not program_data:
-        return
 
-    ip = input("Enter IPv4 address, you can see on your server: ")
+class MainWindow(Screen):
+    @staticmethod
+    def push_button_pressed():
+        global connection, program_data
+        connection.send(b"push")
+        command_push_pull(connection, program_data, "send")
 
-    print("\nConnecting to the server...", end="")
-    connection = socket_startup(ip, False)
-    print("success")
+    @staticmethod
+    def pull_button_pressed():
+        global connection, program_data
+        connection.send(b"pull")
+        command_push_pull(connection, program_data, "recv")
 
-    while 1:
-        command = input("\nEnter command (push, pull, create-backup, load-backup, exit): ").lower()
-        if command in ("push", "pull", "create-backup", "load-backup", "exit"):
-            break
-        print("Unknown command. Try again")
+    @staticmethod
+    def cb_button_pressed():
+        global connection, program_data
+        connection.send(b"create-backup")
+        command_create_backup(program_data)
 
-    connection.send(command.encode())
+    @staticmethod
+    def lb_button_pressed():
+        global connection, program_data
+        connection.send(b"load - backup")
+        command_load_backup(program_data)
 
-    match command:
-        case "push":
-            command_push_pull(connection, program_data, "send")
-        case "pull":
-            command_push_pull(connection, program_data, "recv")
-        case "create-backup":
-            command_create_backup(program_data)
-        case "load-backup":
-            command_load_backup(program_data)
-        case "exit":
-            connection.close()
+
+class ConnectToServerWindow(Screen):
+    ip_input = ObjectProperty(None)
+
+    def connect_button_pressed(self):
+        global connection
+        connection = socket_startup(self.ip_input.text, False)
+
+
+class WindowManager(ScreenManager):
+    pass
+
+
+kv = Builder.load_file("kivy.kv")
+
+
+class ClientApp(App):
+    def build(self):
+        return kv
 
 
 if __name__ == "__main__":
-    main()
-
+    ClientApp().run()
