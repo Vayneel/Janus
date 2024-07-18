@@ -37,7 +37,7 @@ def main():
         case "pull":
             command_push(connection, program_data, "recv")
         case "create-backup":
-            pass
+            pass  # todo
         case "load-backup":
             pass
 
