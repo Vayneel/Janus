@@ -24,8 +24,12 @@ def handler(connection, address):
 if __name__ == "__main__":
     global program_data
     program_data = get_program_data(True)
+
+    IP = socket.gethostbyname(socket.gethostname())
+    print(f"\nYour IP address is <{IP}>")
+
     if program_data:
-        s = socket_startup(True)
+        s = socket_startup(IP, True)
         s.listen()
         handler(*s.accept())
         s.close()
