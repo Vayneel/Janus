@@ -134,3 +134,29 @@ def gather_zipfile(connection):
 
 def remove_obsidian_dir_content(program_data_dict):
     shutil.rmtree(program_data_dict['obsidian_dir'], ignore_errors=True)
+
+
+def command_push(connection, program_data_dict, mode: str):
+    """
+    :param mode: recv/send
+    """
+    if mode == "send":
+        zipfile_size = zip_obsidian(program_data_dict)
+        connection.send(zipfile_size.to_bytes(64, "big"))
+
+        with open(program_data_dict["zipfile_loc"], "rb") as zipfile:
+            connection.send(zipfile.read())
+
+    elif mode == "recv":
+        print("\nReceiving zip archive...\n")
+        zipfile_bytes = gather_zipfile(connection)
+        print("\nBytes received")
+        with open(program_data_dict["received_zipfile_loc"], "wb") as zipfile:
+            zipfile.write(zipfile_bytes.getvalue())
+        print("Archive created")
+        remove_obsidian_dir_content(program_data_dict)
+        print("Obsidian content removed")
+        with ZipFile(program_data_dict["received_zipfile_loc"], "r") as zipfile:
+            zipfile.extractall(program_data_dict["obsidian_dir"])
+        print("Archive extracted into obsidian directory")
+
