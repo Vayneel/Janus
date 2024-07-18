@@ -35,14 +35,9 @@ async def example(reader, writer):
         writer.close()
 
 
-async def client_push(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-    file_as_bytes = BytesIO()
-    while 1:
-        break
-        # data = await asyncio.wait_for(reader.read(8192), timeout=8.0)
-        # file_as_bytes.write(data)
-        # if reader.at_eof():
-        #     break
+def client_push():
+    # zip_obsidian(False)  # todo
+    zip_obsidian(True)
 
 
 def main():
@@ -54,23 +49,27 @@ def main():
     print("\nConnecting to the server...", end="")
     connection = socket_startup(False)
     print("success")
-    print_send(connection, "\nClient is ready")
 
-    command = connection.recv(16)
-    print(f"\nCommand from server: <{command.decode()}>")
-    print("\nExecuting command...")
+    while 1:
+        command = input("\nEnter command (push, pull, create-backup, load-backup, exit): ").lower()
+        if command == "exit":
+            connection.close()
+            return
+        elif command in ("push", "pull", "create-backup", "load-backup"):
+            break
+        print("Unknown command. Try again")
 
-    match command.decode():
+    connection.send(command.encode())
+
+    match command:
         case "push":
-            pass
+            client_push()
         case "pull":
             pass
         case "create-backup":
             pass
         case "load-backup":
             pass
-
-    print("\nCommand executed")
 
 
 if __name__ == "__main__":

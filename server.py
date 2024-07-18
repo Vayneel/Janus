@@ -9,34 +9,24 @@ from io import BytesIO
 from general import *
 
 
-def server_push():
-    zip_obsidian(True)
-
-
 def handler(connection, address):
     print(f"\nClient connected with {address[0]}:{address[1]}")
-    client_status = connection.recv(64)
-    print(client_status.decode())
 
-    while 1:
-        command = input("\nEnter command (push, pull, create-backup, load-backup, exit): ").lower()
-        if command == "exit":
-            return
-        elif command in ("push", "pull", "create-backup", "load-backup"):
-            break
-        print("Unknown command. Try again")
+    command = connection.recv(16)
+    print(f"\nCommand from client: <{command.decode()}>")
+    print("\nExecuting command...")
 
-    connection.send(command.encode())
-
-    match command:
+    match command.decode():
         case "push":
-            server_push()
+            pass
         case "pull":
             pass
         case "create-backup":
             pass
         case "load-backup":
             pass
+
+    print("\nCommand executed")
 
 
 if __name__ == "__main__":
