@@ -1,5 +1,4 @@
 from kivy.app import App
-from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.lang import Builder
@@ -39,10 +38,18 @@ class MainWindow(Screen):
 
 
 class ConnectToServerWindow(Screen):
+    global program_data
     ip_input = ObjectProperty(None)
+    try:
+        last_ip = program_data["last_ip"]
+    except KeyError:
+        last_ip = ""
 
     def connect_button_pressed(self):
         global connection
+        program_data["last_ip"] = self.ip_input.text
+        with open("data.json", "w") as datafile:
+            json.dump(program_data, datafile)
         connection = socket_startup(self.ip_input.text, False)
 
 
