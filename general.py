@@ -31,9 +31,11 @@ def find_obsidian_dir(mode: bool) -> str | bool:
 
 def write_program_data(obsidian_dir, mode: bool):
     symbol = "\\" if mode else "/"
-    obsidian_dir_split = obsidian_dir.split(symbol)
 
-    janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + symbol + "Janus"
+    obsidian_dir_split = obsidian_dir.split(symbol)
+    janus_temp_dir = symbol.join(obsidian_dir_split[:-1]) + symbol + ".janus"
+
+    # janus_temp_dir = obsidian_dir + symbol + ".janus"
 
     zipfile_base = janus_temp_dir + symbol
     zipfile_loc = zipfile_base + "janusObsidianArchive.zip"
@@ -90,6 +92,8 @@ def zip_obsidian(program_data_dict, mode: str) -> int:
 
     with ZipFile(zipfile_loc, "w") as zipf:
         for root, dirs, files in os.walk("."):
+            # if root.endswith(".janus"):
+            #     continue
             for file in files:
                 path = os.path.join(root, file)
                 zipf.write(path)
