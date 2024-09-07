@@ -19,12 +19,16 @@ def find_obsidian_dir(mode: bool) -> str | bool:
         drives = re.findall(r"\w+:\\", drives)
         for drive in drives:
             for root, dirs, files in os.walk(drive):
-                if "Obsidian" in dirs:
-                    return os.path.join(root, "Obsidian")
+                # if "Obsidian" in dirs:
+                if ".obsidian" in dirs:
+                    return root
+                    # return os.path.join(root, "Obsidian")
     else:
         for root, dirs, files in os.walk('/storage/emulated/0/'):
-            if "Obsidian" in dirs:
-                return os.path.join(root, "Obsidian")
+            # if "Obsidian" in dirs:
+            if ".obsidian" in dirs:
+                return root
+                # return os.path.join(root, "Obsidian")
 
     return False
 
